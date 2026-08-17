@@ -2,7 +2,59 @@
 session_start();
 require "dbProducts.php";
 
-$sql = "SELECT * FROM products WHERE isDeleted=0 ORDER BY id ASC";
+$categoryId = "";
+$minPrice = "";
+$maxPrice = "";
+$inStock = "";
+
+if (isset($_GET["categoryId"])) {
+    $categoryId = $_GET["categoryId"];
+}
+
+if (isset($_GET["minPrice"])) {
+    $minPrice = $_GET["minPrice"];
+}
+
+if (isset($_GET["maxPrice"])) {
+    $maxPrice = $_GET["maxPrice"];
+}
+
+if (isset($_GET["inStock"])) {
+    $inStock = $_GET["inStock"];
+}
+
+$sqlCategories = "SELECT * FROM categories";
+$resultCategories = mysqli_query($con, $sqlCategories);
+
+
+
+$sql = "SELECT products.*, categories.name AS categoryName
+        FROM products
+        LEFT JOIN categories
+        ON products.categoryId = categories.id
+        WHERE products.isDeleted = 0";
+$result = mysqli_query($con, $sql);
+
+if ($categoryId != "") {
+    $sql .= " AND products.categoryId = '$categoryId'";
+}
+
+if ($minPrice != "") {
+    $sql .= " AND products.price >= '$minPrice'";
+}
+
+if ($maxPrice != "") {
+    $sql .= " AND products.price <= '$maxPrice'";
+}
+
+if ($inStock == "yes") {
+    $sql .= " AND products.quantity > 0";
+}
+
+if ($inStock == "no") {
+    $sql .= " AND products.quantity = 0";
+}
+
 $result = mysqli_query($con, $sql);
 
 ?>
@@ -86,7 +138,46 @@ $result = mysqli_query($con, $sql);
                 <a class="add-product3" href="user.php"> Return to the main screen</a>        
                   <?php } ?>
 
+<form method="GET">
 
+    <label>Category:</label>
+
+    <select name="categoryId">
+
+        <option value="">All Categories</option>
+
+        <?php while ($category = mysqli_fetch_assoc($resultCategories)) { ?>
+
+            <option value="<?php echo $category["id"]; ?>">
+                <?php echo $category["name"]; ?>
+            </option>
+
+        <?php } ?>
+
+    </select>
+<br><br>
+
+<label>Price From:</label>
+<input type="number" name="minPrice" value="<?php echo $minPrice; ?>">
+
+<label>Price To:</label>
+<input type="number" name="maxPrice" value="<?php echo $maxPrice; ?>">
+
+<br><br>
+<label>In Stock:</label>
+
+<select name="inStock">
+
+    <option value="">All</option>
+
+    <option value="yes">Yes</option>
+
+    <option value="no">No</option>
+
+</select>
+<button type="submit">Filter</button>
+<br><br>
+</form> 
  <?php while ($product = mysqli_fetch_assoc($result)) { ?>
  <div class="card" id="product-<?php echo $product['id']; ?>">
  <a href="productDetails.php?id=<?php echo $product["id"]; ?>">
@@ -98,6 +189,10 @@ $result = mysqli_query($con, $sql);
     <p><?php echo $product["description"]; ?><br>
      Quantity: <?php echo $product["quantity"]; ?><br>
      Price:<?php echo $product["price"];?>
+     <p>
+    Category:
+    <?php echo $product["categoryName"]; ?>
+</p>
      <button type="button"
         onclick="addToFavorites(<?php echo $product["id"]; ?>)">
     Add to Favorites

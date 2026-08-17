@@ -1,3 +1,11 @@
+<?php
+require "db.php";
+
+$sqlCategories = "SELECT * FROM categories";
+$resultCategories = mysqli_query($con, $sqlCategories);
+?>  
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,7 +24,16 @@
     Modification Date<input type="date" name="modificationDate"><br><br>
     Price<input type="number" name="price"><br><br>
     Image<input type="file" name="image" accept=".png" required><br><br>
-                        <button>Add</button></p>
+                        
+                    Category:
+<select name="categoryId">
+    <?php while ($category = mysqli_fetch_assoc($resultCategories)) { ?>
+        <option value="<?php echo $category["id"]; ?>">
+            <?php echo $category["name"]; ?>
+        </option>
+    <?php } ?>
+</select>
+<br><br><button>Add</button></p>
 </form>
 </body>
 </html>

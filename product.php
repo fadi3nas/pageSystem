@@ -10,8 +10,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $creationDate = $_POST["creationDate"];
     $modificationDate = $_POST["modificationDate"];
     $price=$_POST["price"];
+    $categoryId = $_POST["categoryId"];
     $imageName = $_FILES["image"]["name"];
     $imageTemp = $_FILES["image"]["tmp_name"];
+
 
     move_uploaded_file($imageTemp, "image/" . $imageName);
 
@@ -26,10 +28,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
 
         $sql = "INSERT INTO products
-        (name, quantity, description, creationDate, modificationDate,price,image)
-        VALUES
-        ('$name', '$quantity', '$description',
-         '$creationDate', '$modificationDate', '$price','$imageName')";
+(name, categoryId, quantity, description, creationDate, modificationDate, price, image)
+       VALUES
+('$name', '$categoryId', '$quantity', '$description',
+ '$creationDate', '$modificationDate', '$price', '$imageName')";
 
         if (mysqli_query($con, $sql)) {
             header("Location: productPage.php");

@@ -29,6 +29,7 @@
             <a href="userReturnInfo.php">View Users List</a>
             <a href="productPage.php">View the products</a>
             <a href="orderHistory.php" class="admin-button">View Order History</a>
+            <a href="addCategory.php" class="admin-button">Add Category</a>
             <a href="reports.php" class="admin-button">
             
     Reports
