@@ -20,6 +20,7 @@ foreach ($_SESSION["cart"] as $product) {
 
 if (!$exists) {
     $_SESSION["cart"][] = [
+        "productId" => $productId,
         "name" => $name,
         "price" => $price,"quantity" => 1,
     "availableQuantity" => $availableQuantity

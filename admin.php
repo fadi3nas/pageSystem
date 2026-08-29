@@ -30,10 +30,9 @@
             <a href="productPage.php">View the products</a>
             <a href="orderHistory.php" class="admin-button">View Order History</a>
             <a href="addCategory.php" class="admin-button">Add Category</a>
-            <a href="reports.php" class="admin-button">
-            
-    Reports
-</a>
-<a href="favorites.php">My Favorites</a>
+            <a href="reports.php" class="admin-button">Reports</a>
+            <a href="addCoupon.php" class="admin-button">Coupons</a>
+            <a href="wishlist.php"class="admin-button"> My Wishlist</a>
+ <a href="favorites.php">My Favorites</a>
 </body>
 </html>

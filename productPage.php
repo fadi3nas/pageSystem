@@ -1,6 +1,26 @@
 <?php
 session_start();
 require "dbProducts.php";
+$page=1;
+$offset=0;
+
+
+$sort="";
+$AtoZ="";
+$ZtoA="";
+$LOWtoHIGh="";
+$HIGHtoLOW="";
+$newest="";
+if(isset($_GET["sort"])){
+$sort=$_GET["sort"];
+}
+
+
+$search = "";
+if (isset($_GET["search"])) {
+    $search = $_GET["search"];
+
+}
 
 $categoryId = "";
 $minPrice = "";
@@ -21,6 +41,8 @@ if (isset($_GET["maxPrice"])) {
 
 if (isset($_GET["inStock"])) {
     $inStock = $_GET["inStock"];
+
+
 }
 
 $sqlCategories = "SELECT * FROM categories";
@@ -36,24 +58,64 @@ $sql = "SELECT products.*, categories.name AS categoryName
 $result = mysqli_query($con, $sql);
 
 if ($categoryId != "") {
-    $sql .= " AND products.categoryId = '$categoryId'";
+    $sql .= "AND products.categoryId = '$categoryId'";
 }
 
 if ($minPrice != "") {
-    $sql .= " AND products.price >= '$minPrice'";
+    $sql .= "AND products.price >= '$minPrice'";
 }
 
 if ($maxPrice != "") {
-    $sql .= " AND products.price <= '$maxPrice'";
+    $sql .= "AND products.price <= '$maxPrice'";
 }
 
 if ($inStock == "yes") {
-    $sql .= " AND products.quantity > 0";
+    $sql .= "AND products.quantity > 0";
 }
 
 if ($inStock == "no") {
-    $sql .= " AND products.quantity = 0";
+    $sql .= "AND products.quantity = 0";
 }
+if ($search != "") {
+    $sql .= "AND products.name LIKE '%$search%'";
+}
+//sort the producys
+if ($sort == "atoz") {
+    $sql .= " ORDER BY products.name ASC";
+}
+
+if ($sort == "ztoa") {
+    $sql .= " ORDER BY products.name DESC";
+}
+
+if ($sort == "lowtohigh") {
+    $sql .= " ORDER BY products.price ASC";
+}
+
+if ($sort == "hightolow") {
+    $sql .= " ORDER BY products.price DESC";
+}
+
+if ($sort == "newest") {
+    $sql .= " ORDER BY products.creationDate DESC";
+}
+
+if(isset($_GET["page"])){
+    $page=$_GET["page"];
+}
+
+
+if($page==1){
+$offset=0;
+}
+if($page==2){
+    $offset=10;
+}
+if($page==3){
+    $offset=20;
+}
+
+$sql .=" LIMIT 10 OFFSET $offset";
 
 $result = mysqli_query($con, $sql);
 
@@ -140,6 +202,23 @@ $result = mysqli_query($con, $sql);
 
 <form method="GET">
 
+<select name="sort">
+    <option value="">Sort By</option>
+    <option value="atoz">Name A-Z</option>
+    <option value="ztoa">Name Z-A</option>
+    <option value="lowtohigh">Price Low to High</option>
+    <option value="hightolow">Price High to Low</option>
+    <option value="newest">Newest</option>
+</select>
+
+    <input type="text"
+           name="search"
+           placeholder="Search product"
+           value="<?php echo $search; ?>">
+
+    <button type="submit">Search</button>
+
+    <br><br>
     <label>Category:</label>
 
     <select name="categoryId">
@@ -182,7 +261,7 @@ $result = mysqli_query($con, $sql);
  <div class="card" id="product-<?php echo $product['id']; ?>">
  <a href="productDetails.php?id=<?php echo $product["id"]; ?>">
  <img src="image/<?php echo $product["image"]; ?>" style="width:90%"></a>
-
+  
 <div class="container">
     
 <h4><b><?php echo $product["name"]; ?></b> </h4>
@@ -208,6 +287,10 @@ $result = mysqli_query($con, $sql);
     </div>
     </div>
 <?php } ?>
+
+<a href="productPage.php?page=1">1</a>
+<a href="productPage.php?page=2">2</a>
+<a href="productPage.php?page=3">3</a>
 <script>
     function addToFavorites(id) {
 

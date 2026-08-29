@@ -58,26 +58,41 @@ if (isset($_SESSION["cart"])) {
     echo '<span> ' . $product["quantity"] .' </span>';
     echo '<button type="button" onclick="changeQuantity(' . $index . ', \'plus\')">+</button><br><br>';
     echo '<button type="button" class="remove-button" onclick="removeFromCart(' . $index . ')">Remove the product</button>';
-        $total = $total + ($product["price"] * $product["quantity"]);
-       
+        $total = $total + ($product["price"] * $product["quantity"]);      
     }
 } 
 else {
     echo "Cart is empty, add any produt";
+}
+if (isset($_SESSION["couponValue"])) {
+    $total = $total - $_SESSION["couponValue"];
+
+    if ($total < 0) {
+        $total = 0;
+    }
 }?>
+
  <h2 class="totalBar"> total: <?php echo $total; ?></h2>
-   
+ 
+<form action="userCoupon.php" method="POST">
+    <input type="text" name="couponUserName">
+    <button type="submit">Add coupon</button>
+</form>
+
+
  <?php if (!empty($_SESSION["cart"])) { ?>
 <form action="buy.php" method="POST">
     <button type="submit">Buy</button>
-</form><?php } ?>
+</form>
+<?php } ?>
 
 <script>
     function removeFromCart(index){
         fetch("removeFromCart.php",{method:"POST",headers:{"Content-Type": "application/x-www-form-urlencoded"},body:"index="+index})
         .then(response=>response.text())
         .then(data=>{if(data.trim()==="success"){
-            location.reload();}
+            location.reload();
+        }
     });    
         }
 function changeQuantity(index, action) {
