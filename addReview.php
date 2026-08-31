@@ -14,6 +14,14 @@ $sql = "INSERT INTO reviews
         ('$userId', '$productId', '$rating', '$reviewText', '$reviewDate')";
 
 mysqli_query($con, $sql);
+$adminMessage = "New review added for product #$productId.";
+
+$sqlAdminNotification = "INSERT INTO notifications
+                         (userId, message, isAdminNotification)
+                         VALUES
+                         ('$userId', '$adminMessage', 1)";
+
+mysqli_query($con, $sqlAdminNotification);
 
 header("Location: productDetails.php?id=$productId");
 exit();
